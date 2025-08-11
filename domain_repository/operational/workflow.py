@@ -1,28 +1,26 @@
-# Workflow domain model
-from pydantic import BaseModel, Field
-from typing import List, Optional
-from uuid import UUID, uuid4
-from datetime import datetime, timezone
+# Workflow domain model with polymorphic base
+from pydantic import Field
+from typing import Optional, List, Dict, Any
+from uuid import UUID
+from ..core.base import ExecutableMetamodel, MetamodelType
 
-class Workflow(BaseModel):
+
+class Workflow(ExecutableMetamodel):
     """
-    JSON-LD compatible Workflow metamodel.
+    JSON-LD compatible Workflow metamodel with polymorphic behavior.
 
     Represents the structure of a Workflow type for the metadata registry.
     This is a metamodel (a blueprint), not a concrete workflow instance.
+
+    Ontology/semantic features:
+    - semantic_tags: List of SKOS or domain-specific tags
+    - ontology_mappings: Dict of ontology URIs (e.g., skos:exactMatch, rdfs:subClassOf)
+    - external_references: List of URIs to standards or docs
+    - constraints: List of SHACL-like or custom validation rules
+    - parent_id: Optional parent metamodel for inheritance
     """
-    id: UUID = Field(default_factory=uuid4, description="Unique identifier for this workflow metamodel.")
-    name: str = Field(..., description="Human-readable name for the workflow type.")
-    description: Optional[str] = Field(None, description="Optional description of the workflow type.")
-    component_ids: List[UUID] = Field(default_factory=list, description="List of component metamodel UUIDs that make up this workflow.")
-    
-    @property
-    def __jsonld__(self):
-        return {
-            "@context": "https://schema.org",
-            "@type": "Workflow",
-            "id": str(self.id),
-            "name": self.name,
-            "description": self.description,
-            "component_ids": [str(cid) for cid in self.component_ids],
-        }
+
+    metamodel_type = MetamodelType.WORKFLOW
+
+    # No direct reference fields; all relationships are managed via Relationship objects.
+    pass

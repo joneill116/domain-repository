@@ -1,29 +1,23 @@
-# Component domain model
-from pydantic import BaseModel, Field
-from typing import Optional
-from uuid import UUID, uuid4
-from datetime import datetime
+# Component domain model with polymorphic base
+from pydantic import Field
+from typing import Optional, Dict, Any
+from uuid import UUID
+from ..core.base import ExecutableMetamodel, MetamodelType
 
-class Component(BaseModel):
-    """JSON-LD compatible Component metamodel."""
-    id: UUID = Field(default_factory=uuid4)
-    name: str
-    description: Optional[str] = None
-    protocol_id: Optional[UUID] = None
-    expectation_id: Optional[UUID] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
 
-    @property
-    def __jsonld__(self):
-        return {
-            "@context": "https://schema.org",
-            "@type": "Component",
-            "id": str(self.id),
-            "name": self.name,
-            "description": self.description,
-            "protocol_id": str(self.protocol_id) if self.protocol_id else None,
-            "expectation_id": str(self.expectation_id) if self.expectation_id else None,
-            "created_at": self.created_at.isoformat(),
-            "updated_at": self.updated_at.isoformat(),
-        }
+class Component(ExecutableMetamodel):
+    """
+    JSON-LD compatible Component metamodel with polymorphic behavior.
+
+    Ontology/semantic features:
+    - semantic_tags: List of SKOS or domain-specific tags
+    - ontology_mappings: Dict of ontology URIs (e.g., skos:exactMatch, rdfs:subClassOf)
+    - external_references: List of URIs to standards or docs
+    - constraints: List of SHACL-like or custom validation rules
+    - parent_id: Optional parent metamodel for inheritance
+    """
+
+    metamodel_type = MetamodelType.COMPONENT
+
+    # No direct reference fields; all relationships are managed via Relationship objects.
+    pass

@@ -1,70 +1,62 @@
-# Example Metamodels for Operational Domain
+# Relationship-Centric Example Metamodels for Operational Domain
 
-This document provides example definitions for workflow, component, protocol, and expectation metamodels. These examples illustrate how to use the abstract models in the `operational` folder to define types for registration in the metadata-registry-svc.
+This document provides example definitions for workflow, component, protocol, and expectation metamodels using the relationship-centric, ontology-driven design. All connections are managed via explicit Relationship objects and the service layer.
 
 ---
 
-## Example: Data Processing Workflow Metamodel
+## Example: Data Processing Workflow, Components, Protocol, and Expectation
 
 ```python
-from operational.workflow import Workflow
-from uuid import uuid4
+from domain_repository.services import polymorphic_service
 
-# Example component UUIDs (would be registered separately)
-acquisition_component_id = uuid4()
-transformation_component_id = uuid4()
-
-workflow_metamodel = Workflow(
-    name="Data Processing Workflow",
-    description="A workflow for processing raw data through acquisition and transformation steps.",
-    component_ids=[acquisition_component_id, transformation_component_id]
+# Create protocol, expectation, and component (no direct references)
+protocol = polymorphic_service.create_protocol(
+    name="Send to Analyst on Failure",
+    description="If an expectation fails on a component, notify an analyst for review.",
+    semantic_tags=["notification", "escalation"]
 )
-print(workflow_metamodel.__jsonld__)
-```
-
----
-
-## Example: Acquisition Component Metamodel
-
-```python
-from operational.component import Component
-from uuid import uuid4
-
-protocol_id = uuid4()  # Example protocol UUID
-
-acquisition_component = Component(
+expectation = polymorphic_service.create_expectation(
+    name="Row Count Expectation",
+    description="Checks if the row count meets a minimum threshold.",
+    semantic_tags=["quality", "row_count"]
+)
+component = polymorphic_service.create_component(
     name="Acquisition Component",
     description="Component responsible for acquiring data from source systems.",
-    protocol_id=protocol_id
+    semantic_tags=["acquisition", "data"]
 )
-print(acquisition_component.__jsonld__)
+
+# Create workflow (no component_ids field)
+workflow = polymorphic_service.create_workflow(
+    name="Data Processing Workflow",
+    description="A workflow for processing raw data through acquisition and transformation steps.",
+    semantic_tags=["workflow", "data_processing"]
+)
+
+# Link entities via explicit relationships
+polymorphic_service.create_relationship(
+    source_id=workflow.id,
+    target_id=component.id,
+    relationship_type="contains"
+)
+polymorphic_service.create_relationship(
+    source_id=component.id,
+    target_id=protocol.id,
+    relationship_type="implements"
+)
+polymorphic_service.create_relationship(
+    source_id=component.id,
+    target_id=expectation.id,
+    relationship_type="fulfills"
+)
+
+# Serialize to JSON-LD
+print(polymorphic_service.export_complete_jsonld_graph())
 ```
 
 ---
 
-
-## Example: Protocol Metamodel (Business Protocol)
-
-```python
-from operational.protocol import Protocol
-
-protocol = Protocol(
-    name="Send to Analyst on Failure",
-    description="If an expectation fails on a component, notify an analyst for review."
-)
-print(protocol.__jsonld__)
-```
-
----
-
-## Example: Expectation Metamodel
-
-```python
-from operational.expectation import Expectation
-
-expectation = Expectation(
-    name="Row Count Expectation",
-    description="Expectation that checks if the row count meets a minimum threshold."
-)
-print(expectation.__jsonld__)
-```
+## Notes
+- All entity connections are managed via explicit Relationship objects—never direct fields.
+- Ontology/semantic fields and provenance are first-class citizens.
+- All JSON-LD and API payloads reflect the decoupled, relationship-centric model.
