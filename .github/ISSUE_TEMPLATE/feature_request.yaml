@@ -1,0 +1,28 @@
+name: Feature Request
+about: Suggest an idea for domain-repository
+labels: enhancement
+
+title: '[FEATURE] <short description>'
+body:
+  - type: textarea
+    id: what-feature
+    attributes:
+      label: What feature do you want?
+      description: Describe the feature in detail.
+      placeholder: Tell us what you want!
+    validations:
+      required: true
+  - type: textarea
+    id: why-needed
+    attributes:
+      label: Why is it needed?
+      description: Why would this feature be useful?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What alternatives have you considered?
+    validations:
+      required: false
