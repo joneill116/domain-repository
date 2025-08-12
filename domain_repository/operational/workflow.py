@@ -23,4 +23,6 @@ class Workflow(ExecutableMetamodel):
     metamodel_type = MetamodelType.WORKFLOW
 
     # No direct reference fields; all relationships are managed via Relationship objects.
+    def get_related_entity_ids(self) -> dict:
+        return {}
     pass

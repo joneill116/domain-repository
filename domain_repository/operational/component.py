@@ -20,4 +20,6 @@ class Component(ExecutableMetamodel):
     metamodel_type = MetamodelType.COMPONENT
 
     # No direct reference fields; all relationships are managed via Relationship objects.
+    def get_related_entity_ids(self) -> dict:
+        return {}
     pass

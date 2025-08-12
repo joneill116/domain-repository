@@ -1,0 +1,31 @@
+# Ignore Python cache and build artifacts
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+*.pyo
+*.egg-info/
+.eggs/
+build/
+dist/
+*.log
+*.sqlite3
+*.db
+*.DS_Store
+.env
+.venv
+venv/
+ENV/
+.envrc
+.idea/
+.vscode/
+*.swp
+*.bak
+*.tmp
+# Ignore test output
+htmlcov/
+.coverage
+.cache/
+.pytest_cache/
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/

@@ -1,5 +1,5 @@
 # Enhanced relationship management system
-from typing import Dict, List, Optional, Set, Type, Union
+from typing import Dict, List, Optional, Set, Type, Union, Any
 from uuid import UUID, uuid4
 from enum import Enum
 from pydantic import BaseModel, Field
@@ -24,7 +24,7 @@ class Relationship(BaseModel):
     source_id: UUID = Field(..., description="Source entity UUID")
     target_id: UUID = Field(..., description="Target entity UUID")
     relationship_type: RelationshipType
-    metadata: Optional[Dict[str, any]] = Field(
+    metadata: Optional[Dict[str, Any]] = Field(
         default=None, description="Additional relationship metadata"
     )
 
